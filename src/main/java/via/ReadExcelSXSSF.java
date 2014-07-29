@@ -18,9 +18,15 @@ public class ReadExcelSXSSF {
 	 * Esta maneira de processar XML é mais rápida e consume menos recurso, mas só dá para ler o XML.
 	 * A estrutura é feita para ser lida linha a linha (i.e, le todas as colunas, com valor, da linha 1, etc) 
 	 */
+	private int processedCells;
+	private String filename;
 	
 	public ReadExcelSXSSF() {
-		String filename = "C:\\Users\\joao_2\\Desktop\\Book1.xlsx";
+		filename = "C:\\Users\\joao_2\\Desktop\\Book1.xlsx";
+		processedCells = 0;
+	}
+	
+	public void doit() {
 		try {
 			/* Abrir o ficheiro */
 			OPCPackage pkg = OPCPackage.open(filename);
@@ -43,15 +49,21 @@ public class ReadExcelSXSSF {
 			InputSource sheetSource = new InputSource(sheet1);
 			saxParser.parse(sheetSource, saxHandler);
 			sheet1.close();
+			processedCells = saxHandler.getNumProcessedCells();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	public int getProcessedCells() {
+		return processedCells;
+	}
+	
 	public static void main(String[] args) {
 		Date start = new Date();
-		new ReadExcelSXSSF();
+		ReadExcelSXSSF reader = new ReadExcelSXSSF();
+		reader.doit();
 		Date end = new Date();
 		
 		long diff = end.getTime() - start.getTime();
@@ -60,7 +72,7 @@ public class ReadExcelSXSSF {
 		long diffMinutes = diff / (60 * 1000) % 60;
 		long diffHours = diff / (60 * 60 * 1000) % 24;
 		
-		System.out.print("Done in: ");
+		System.out.print("Processed " + reader.getProcessedCells() + " cells in: ");
 		System.out.print(diffHours + " hours, ");
 		System.out.print(diffMinutes + " minutes, ");
 		System.out.println(diffSeconds + " seconds.");

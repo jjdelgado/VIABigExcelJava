@@ -17,9 +17,15 @@ public class SheetHandler extends DefaultHandler {
 	private SharedStringsTable sst;
 	private String string;
 	private boolean nextValueIsSharedString;
+	private int processedCells;
 	
 	public SheetHandler(SharedStringsTable sst) {
 		this.sst = sst;
+		processedCells = 0;
+	}
+	
+	public int getNumProcessedCells() {
+		return processedCells;
 	}
 	
 	@Override
@@ -29,6 +35,7 @@ public class SheetHandler extends DefaultHandler {
 		 * Aqui vejo se se abre a tag <c>, que corresponde a uma celula em excel
 		 */
 		if (qName.equals("c")) {
+			processedCells++;
 			String cellType =  attributes.getValue("t"); // obtenho o tipo da celula (atributo "t")
 			System.out.print(attributes.getValue("r") + "(type: " + cellType + ") - "); // O atributo "r" é a coordenada da celula - A1, A2, B7, etc
 			if (cellType != null && cellType.equals("s")) { // se o tipo da celula for "s" - significa que tens de ler da tal SharedStringTable - no fim do ficheiro estao todos os tipo
